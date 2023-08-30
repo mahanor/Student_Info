@@ -1,0 +1,102 @@
+﻿
+@model IEnumerable<Students_Info.Models.Student>
+
+@{
+    ViewData["Title"] = "ShowAllStudents";
+}
+
+<h2>ShowAllStudents</h2>
+
+<p>
+    <a asp-action="InsertStudent">Create</a>
+</p>
+
+@using (Html.BeginForm("ShowAllStudents", "Student", FormMethod.Get))
+{
+    <div>
+        <label>Filter by Registration Date:</label>
+        <input type="date" name="registrationDateFilter" value="@ViewBag.RegistrationDateFilter" />
+    </div>
+    <div>
+        <label>Filter by Student Name:</label>
+        <input type="text" name="studentNameFilter" value="@ViewBag.StudentNameFilter" />
+    </div>
+    <div>
+        <label>Filter by Home City:</label>
+        <input type="text" name="homeCityFilter" value="@ViewBag.HomeCityFilter" />
+    </div>
+    <div>
+        <button type="submit">Apply Filters</button>
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @*@Html.DisplayNameFor(model => model.StdId)*@
+                StdId
+
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StdName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FatherName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MotherName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StdAge)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HomeAddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RegistrationDate)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.IsDeleted)
+            </th>*@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            bool showRow = true;
+            if (!string.IsNullOrEmpty(ViewBag.RegistrationDateFilter))
+            {
+                showRow = showRow && item.RegistrationDate.Date == DateTime.Parse(ViewBag.RegistrationDateFilter).Date;
+            }
+            if (!string.IsNullOrEmpty(ViewBag.StudentNameFilter))
+            {
+                showRow = showRow && item.StdName.Contains(ViewBag.StudentNameFilter, StringComparison.OrdinalIgnoreCase);
+            }
+            if (!string.IsNullOrEmpty(ViewBag.HomeCityFilter))
+            {
+                showRow = showRow && item.HomeAddress.Contains(ViewBag.HomeCityFilter, StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (showRow)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.StdId)</td>                 
+                    <td>@Html.DisplayFor(modelItem => item.StdName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.FatherName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.MotherName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.StdAge)</td>
+                    <td>@Html.DisplayFor(modelItem => item.HomeAddress)</td>
+                   @* <td>@Html.DisplayFor(modelItem => item.RegistrationDate)</td>*@
+                    <td>@item.RegistrationDate.ToString("yyyy-MM-dd")</td>
+                   @* <td>@Html.DisplayFor(modelItem => item.IsDeleted)</td>*@
+                    <td>
+                        @Html.ActionLink("EditStudent", "EditStudent", new { id = item.StdId }) |
+                        @Html.ActionLink("DeleteStudent", "DeleteStudent", new { id = item.StdId })
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
